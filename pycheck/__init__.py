@@ -4,6 +4,7 @@ GENERATORS = {
     str:     StringGenerator,
     int:     IntGenerator,
     unicode: UnicodeGenerator,
+    bool:    BooleanGenerator,
 }
 
 NUM_CALLS = 100

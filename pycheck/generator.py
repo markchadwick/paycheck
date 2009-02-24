@@ -7,7 +7,7 @@ import random
 # ------------------------------------------------------------------------------
 
 MIN_INT = -sys.maxint - 1
-MAx_INT = sys.maxint
+MAX_INT = sys.maxint
 
 MAX_STR = 255
 MAX_UNI = sys.maxunicode
@@ -42,4 +42,8 @@ class UnicodeGenerator(PyCheckGenerator):
 
 class IntGenerator(PyCheckGenerator):
     def nextValue(self):
-        return random.randint(MIN_INT, MAx_INT)
+        return random.randint(MIN_INT, MAX_INT)
+
+class BooleanGenerator(PyCheckGenerator):
+    def nextValue(self):
+        return random.randint(0, 1) == 1

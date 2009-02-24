@@ -1,3 +1,6 @@
 .project
 .pydevproject
 *.pyc
+MANIFEST
+build/
+dist/
