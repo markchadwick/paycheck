@@ -16,7 +16,7 @@ MAX_UNI = sys.maxunicode
 # Generators
 # ------------------------------------------------------------------------------
 
-class Generator(object):
+class PyCheckGenerator(object):
     def __init__(self, num_calls):
         self._calls_remaining = num_calls
 
@@ -30,11 +30,16 @@ class Generator(object):
             self._calls_remaining -= 1
             return self.nextValue()
 
-class StringGenerator(Generator):
+class StringGenerator(PyCheckGenerator):
     def nextValue(self):
         length = random.randint(0, 40)
         return ''.join([chr(random.randint(0, MAX_STR)) for x in xrange(length)])
 
-class IntGenerator(Generator):
+class UnicodeGenerator(PyCheckGenerator):
+    def nextValue(self):
+        length = random.randint(0, 40)
+        return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
+
+class IntGenerator(PyCheckGenerator):
     def nextValue(self):
         return random.randint(MIN_INT, MAx_INT)

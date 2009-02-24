@@ -1,8 +1,9 @@
 from pycheck.generator import *
 
 GENERATORS = {
-    str:  StringGenerator,
-    int:  IntGenerator
+    str:     StringGenerator,
+    int:     IntGenerator,
+    unicode: UnicodeGenerator,
 }
 
 NUM_CALLS = 100
