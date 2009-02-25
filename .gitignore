@@ -2,5 +2,6 @@
 .pydevproject
 *.pyc
 MANIFEST
-build/
-dist/
+build
+dist
+target

@@ -14,7 +14,7 @@ MAX_INT = sys.maxint
 MAX_STR = 255
 MAX_UNI = sys.maxunicode
 
-LIST_LEN = 40
+LIST_LEN = 30
 
 # ------------------------------------------------------------------------------
 # Exceptions
@@ -53,7 +53,7 @@ class PyCheckGenerator(object):
             raise StopIteration
         else:
             self._calls_remaining -= 1
-            return self.nextValue()
+            return self.next_value()
     
     @classmethod
     def get(cls, t_def):
@@ -62,7 +62,12 @@ class PyCheckGenerator(object):
             
         elif isinstance(t_def, tuple) and len(t_def) == 2:
             outer, inner = t_def
-            return cls._generator_for_type(outer)(cls.get(inner))
+            outer = cls._generator_for_type(outer)
+            
+            if issubclass(outer, CollectionGenerator):
+                return outer(cls.get(inner))
+            else:
+                return (outer(), cls.get(inner))
         
         else:
             raise UnknownTypeException(t_def)
@@ -88,28 +93,31 @@ class PyCheckGenerator(object):
 # ------------------------------------------------------------------------------
 
 class StringGenerator(PyCheckGenerator):
-    def nextValue(self):
+    def next_value(self):
         length = random.randint(0, LIST_LEN)
         return ''.join([chr(random.randint(0, MAX_STR)) for x in xrange(length)])
 
 class UnicodeGenerator(PyCheckGenerator):
-    def nextValue(self):
+    def next_value(self):
         length = random.randint(0, LIST_LEN)
         return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PyCheckGenerator):
-    def nextValue(self):
+    def next_value(self):
         return random.randint(MIN_INT, MAX_INT)
 
 class BooleanGenerator(PyCheckGenerator):
-    def nextValue(self):
+    def next_value(self):
         return random.randint(0, 1) == 1
     
 # ------------------------------------------------------------------------------
 # Collection Generators
 # ------------------------------------------------------------------------------
 
-class ListGenerator(PyCheckGenerator):
+class CollectionGenerator(PyCheckGenerator):
+    pass
+
+class ListGenerator(CollectionGenerator):
     def __init__(self, inner=None, num_calls=NUM_CALLS):
         PyCheckGenerator.__init__(self, num_calls=num_calls)
         if inner is None:
@@ -117,12 +125,24 @@ class ListGenerator(PyCheckGenerator):
                                        "as (list, int) or (list, bool)")
         self.inner = inner
     
-    def nextValue(self):
+    def next_value(self):
         length = random.randint(0, LIST_LEN)
-        return [self.inner.nextValue() for x in xrange(length)]
+        return [self.inner.next_value() for x in xrange(length)]
 
-def DictGenerator(PyCheckGenerator):
-    def __init__(self, k_inner, v_inner, num_calls=NUM_CALLS):
+class DictGenerator(CollectionGenerator):
+    def __init__(self, inner=None, num_calls=NUM_CALLS):
         PyCheckGenerator.__init__(self, num_calls=num_calls)
-        self.k_inner = k_inner
-        self.v_inner = v_inner
+        self.k_inner, self.v_inner = inner
+        
+        if not (isinstance(self.k_inner, PyCheckGenerator) and isinstance(self.v_inner, PyCheckGenerator)):
+            raise UnknownTypeException("PyCheck needs a type for dicts, such " +
+                                       "as (dict, (str, int))")
+
+    def next_value(self):
+        dct = {}
+        length = random.randint(0, LIST_LEN)
+        for x in xrange(length):
+            dct[self.k_inner.next_value()] = self.v_inner.next_value()
+            
+        return dct
+        

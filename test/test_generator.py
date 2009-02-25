@@ -42,6 +42,7 @@ class TestTypes(unittest.TestCase):
         
     def test_get_list_of_type(self):
         generator = PyCheckGenerator.get((list, int))
+        print '** Generator: ', generator
         self.assertTrue(isinstance(generator, ListGenerator))
         self.assertTrue(isinstance(generator.inner, IntGenerator))
         
@@ -50,3 +51,13 @@ class TestTypes(unittest.TestCase):
         self.assertTrue(isinstance(generator, ListGenerator))
         self.assertTrue(isinstance(generator.inner, ListGenerator))
         self.assertTrue(isinstance(generator.inner.inner, IntGenerator))
+    
+    def test_malformatted_list(self):
+        getter = lambda: PyCheckGenerator.get(list)
+        self.assertRaises(UnknownTypeException, getter)
+    
+    def test_dict_of_str_int(self):
+        generator = PyCheckGenerator.get((dict, (str, int)))
+        self.assertTrue(isinstance(generator, DictGenerator))
+        self.assertTrue(isinstance(generator.k_inner, StringGenerator))
+        self.assertTrue(isinstance(generator.v_inner, IntGenerator))

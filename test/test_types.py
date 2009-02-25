@@ -35,14 +35,27 @@ class TestTypes(unittest.TestCase):
             for b in list_of_bools:
                 self.assertTrue(isinstance(b, bool))
 
-#    @with_checker(int, (dict, (str, int)))
-#    def test_dict_of_str_key_int_values(self, i, dict_of_str_int):
-#        self.assertTrue(isinstance(i, int))
-#        self.assertTrue(isinstance(dict_of_str_int, dict))
-#        
-#        for key, value in dict_of_str_int.items():
-#            self.assertTrue(isinstance(key, string))
-#            self.assertTrue(isinstance(value, int))
+    @with_checker(int, (dict, (str, int)))
+    def test_dict_of_str_key_int_values(self, i, dict_of_str_int):
+        self.assertTrue(isinstance(i, int))
+        self.assertTrue(isinstance(dict_of_str_int, dict))
+        
+        for key, value in dict_of_str_int.items():
+            self.assertTrue(isinstance(key, str))
+            self.assertTrue(isinstance(value, int))
+
+    @with_checker((list, (dict, (str, int))))
+    def test_recursive_dicts_and_lists(self, list_of_dict_of_int_string):
+        self.assertTrue(isinstance(list_of_dict_of_int_string, list))
+        
+        for dict_of_int_string in list_of_dict_of_int_string:
+            self.assertTrue(isinstance(dict_of_int_string, dict))
+            
+            print '- ' * 100
+            print dict_of_int_string
+            for key, value in dict_of_int_string.items():
+                self.assertTrue(isinstance(key, str))
+                self.assertTrue(isinstance(value, int))
 
 if __name__ == '__main__':
     unittest.main()
