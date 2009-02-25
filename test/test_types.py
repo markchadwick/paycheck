@@ -21,9 +21,23 @@ class TestTypes(unittest.TestCase):
         self.assertEquals(b, b == True)
 
     @with_checker((list, int))
-    def test_list_of_ints(self, list_of_ints):
+    def test_get_list(self, list_of_ints):
+        self.assertTrue(isinstance(list_of_ints, list))
         for i in list_of_ints:
             self.assertTrue(isinstance(i, int))
+
+    @with_checker((set, str))
+    def test_get_list(self, set_of_strs):
+        self.assertTrue(isinstance(set_of_strs, set))
+        for s in set_of_strs:
+            self.assertTrue(isinstance(s, str))
+
+    @with_checker((dict, (str, int)))
+    def test_get_dict(self, dict_of_str_int):
+        self.assertTrue(isinstance(dict_of_str_int, dict))
+        for key, value in dict_of_str_int.items():
+            self.assertTrue(isinstance(key, str))
+            self.assertTrue(isinstance(value, int))
 
     @with_checker(str, (list, (list, bool)))
     def test_nested_types(self, s, list_of_lists_of_bools):

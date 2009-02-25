@@ -82,8 +82,10 @@ class PyCheckGenerator(object):
                 int:     IntGenerator,
                 unicode: UnicodeGenerator,
                 bool:    BooleanGenerator,
+                float:   FloatGenerator,
                 list:    ListGenerator,
-                dict:    DictGenerator
+                dict:    DictGenerator,
+                set:     SetGenerator,
             }[t_def]
         except KeyError:
             raise UnknownTypeException(t_def)
@@ -109,6 +111,10 @@ class IntGenerator(PyCheckGenerator):
 class BooleanGenerator(PyCheckGenerator):
     def next_value(self):
         return random.randint(0, 1) == 1
+
+class FloatGenerator(PyCheckGenerator):
+    def next_value(self):
+        return (random.random() - 0.5) * 9999999.0
     
 # ------------------------------------------------------------------------------
 # Collection Generators
@@ -128,6 +134,10 @@ class ListGenerator(CollectionGenerator):
     def next_value(self):
         length = random.randint(0, LIST_LEN)
         return [self.inner.next_value() for x in xrange(length)]
+
+class SetGenerator(ListGenerator):
+    def next_value(self):
+        return set(ListGenerator.next_value(self))
 
 class DictGenerator(CollectionGenerator):
     def __init__(self, inner=None, num_calls=NUM_CALLS):

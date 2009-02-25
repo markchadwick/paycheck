@@ -26,11 +26,21 @@ class TestTypes(unittest.TestCase):
         self.assertEquals(
                     ListGenerator,
                     PyCheckGenerator._generator_for_type(list))
-    
+
     def test_get_dict(self):
         self.assertEquals(
                     DictGenerator,
                     PyCheckGenerator._generator_for_type(dict))
+    
+    def test_get_float(self):
+        self.assertEquals(
+                    FloatGenerator,
+                    PyCheckGenerator._generator_for_type(float))
+        
+    def test_get_set(self):
+        self.assertEquals(
+                    SetGenerator,
+                    PyCheckGenerator._generator_for_type(set))
     
     def test_get_unknown_type_throws_exception(self):
         getter = lambda: PyCheckGenerator._generator_for_type(tuple)
@@ -42,7 +52,6 @@ class TestTypes(unittest.TestCase):
         
     def test_get_list_of_type(self):
         generator = PyCheckGenerator.get((list, int))
-        print '** Generator: ', generator
         self.assertTrue(isinstance(generator, ListGenerator))
         self.assertTrue(isinstance(generator.inner, IntGenerator))
         
