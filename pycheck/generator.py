@@ -2,6 +2,8 @@ import sys
 import string
 import random
 
+from pycheck import NUM_CALLS
+
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
@@ -12,12 +14,25 @@ MAX_INT = sys.maxint
 MAX_STR = 255
 MAX_UNI = sys.maxunicode
 
+LIST_LEN = 40
+
 # ------------------------------------------------------------------------------
-# Generators
+# Exceptions
+# ------------------------------------------------------------------------------
+
+class UnknownTypeException(Exception):
+    def __init__(self, t_def):
+        self.t_def = t_def
+    
+    def __str__(self):
+        return "PyCheck doesn't know about type: " + str(self.t_def) 
+
+# ------------------------------------------------------------------------------
+# Base Generator
 # ------------------------------------------------------------------------------
 
 class PyCheckGenerator(object):
-    def __init__(self, num_calls):
+    def __init__(self, num_calls=NUM_CALLS):
         self._calls_remaining = num_calls
 
     def __iter__(self):
@@ -29,15 +44,44 @@ class PyCheckGenerator(object):
         else:
             self._calls_remaining -= 1
             return self.nextValue()
+    
+    @classmethod
+    def get(cls, t_def):
+        if isinstance(t_def, type):
+            return cls._generator_for_type(t_def)()
+        
+        elif isinstance(t_def, tuple) and len(t_def) == 2:
+            outer, inner = t_def
+            return cls._generator_for_type(outer)(cls.get(inner))
+        
+        else:
+            raise UnknownTypeException(t_def)
+        
+    @classmethod
+    def _generator_for_type(cls, t_def):
+        try:
+            return {
+                str:     StringGenerator,
+                int:     IntGenerator,
+                unicode: UnicodeGenerator,
+                bool:    BooleanGenerator,
+                list:    ListGenerator,
+            }[t_def]
+        except KeyError:
+            raise UnknownTypeException(t_def)
+
+# ------------------------------------------------------------------------------
+# Basic Type Generators
+# ------------------------------------------------------------------------------
 
 class StringGenerator(PyCheckGenerator):
     def nextValue(self):
-        length = random.randint(0, 40)
+        length = random.randint(0, LIST_LEN)
         return ''.join([chr(random.randint(0, MAX_STR)) for x in xrange(length)])
 
 class UnicodeGenerator(PyCheckGenerator):
     def nextValue(self):
-        length = random.randint(0, 40)
+        length = random.randint(0, LIST_LEN)
         return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PyCheckGenerator):
@@ -47,3 +91,16 @@ class IntGenerator(PyCheckGenerator):
 class BooleanGenerator(PyCheckGenerator):
     def nextValue(self):
         return random.randint(0, 1) == 1
+    
+# ------------------------------------------------------------------------------
+# Collection Generators
+# ------------------------------------------------------------------------------
+
+class ListGenerator(PyCheckGenerator):
+    def __init__(self, inner, num_calls=NUM_CALLS):
+        PyCheckGenerator.__init__(self, num_calls=num_calls)
+        self.inner = inner
+    
+    def nextValue(self):
+        length = random.randint(0, LIST_LEN)
+        return [self.inner.nextValue() for x in xrange(length)]
