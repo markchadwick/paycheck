@@ -1,5 +1,5 @@
 import unittest
-from pycheck import with_checker
+from paycheck import with_checker
 
 class TestStrings(unittest.TestCase):
     """

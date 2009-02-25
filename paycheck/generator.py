@@ -2,7 +2,7 @@ import sys
 import string
 import random
 
-from pycheck import NUM_CALLS
+from paycheck import NUM_CALLS
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -20,17 +20,17 @@ LIST_LEN = 30
 # Exceptions
 # ------------------------------------------------------------------------------
 
-class PyCheckException(Exception):
+class PayCheckException(Exception):
     pass
 
-class UnknownTypeException(PyCheckException):
+class UnknownTypeException(PayCheckException):
     def __init__(self, t_def):
         self.t_def = t_def
     
     def __str__(self):
-        return "PyCheck doesn't know about type: " + str(self.t_def)
+        return "PayCheck doesn't know about type: " + str(self.t_def)
 
-class UnknownTypeException(PyCheckException):
+class UnknownTypeException(PayCheckException):
     def __init__(self, message):
         self.message = message
     
@@ -41,7 +41,7 @@ class UnknownTypeException(PyCheckException):
 # Base Generator
 # ------------------------------------------------------------------------------
 
-class PyCheckGenerator(object):
+class PayCheckGenerator(object):
     def __init__(self, num_calls=NUM_CALLS):
         self._calls_remaining = num_calls
 
@@ -94,25 +94,25 @@ class PyCheckGenerator(object):
 # Basic Type Generators
 # ------------------------------------------------------------------------------
 
-class StringGenerator(PyCheckGenerator):
+class StringGenerator(PayCheckGenerator):
     def next_value(self):
         length = random.randint(0, LIST_LEN)
         return ''.join([chr(random.randint(0, MAX_STR)) for x in xrange(length)])
 
-class UnicodeGenerator(PyCheckGenerator):
+class UnicodeGenerator(PayCheckGenerator):
     def next_value(self):
         length = random.randint(0, LIST_LEN)
         return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
-class IntGenerator(PyCheckGenerator):
+class IntGenerator(PayCheckGenerator):
     def next_value(self):
         return random.randint(MIN_INT, MAX_INT)
 
-class BooleanGenerator(PyCheckGenerator):
+class BooleanGenerator(PayCheckGenerator):
     def next_value(self):
         return random.randint(0, 1) == 1
 
-class FloatGenerator(PyCheckGenerator):
+class FloatGenerator(PayCheckGenerator):
     def next_value(self):
         return (random.random() - 0.5) * 9999999.0
     
@@ -120,14 +120,14 @@ class FloatGenerator(PyCheckGenerator):
 # Collection Generators
 # ------------------------------------------------------------------------------
 
-class CollectionGenerator(PyCheckGenerator):
+class CollectionGenerator(PayCheckGenerator):
     pass
 
 class ListGenerator(CollectionGenerator):
     def __init__(self, inner=None, num_calls=NUM_CALLS):
-        PyCheckGenerator.__init__(self, num_calls=num_calls)
+        PayCheckGenerator.__init__(self, num_calls=num_calls)
         if inner is None:
-            raise UnknownTypeException("PyCheck needs a type for lists, such " +
+            raise UnknownTypeException("PayCheck needs a type for lists, such " +
                                        "as (list, int) or (list, bool)")
         self.inner = inner
     
@@ -141,11 +141,12 @@ class SetGenerator(ListGenerator):
 
 class DictGenerator(CollectionGenerator):
     def __init__(self, inner=None, num_calls=NUM_CALLS):
-        PyCheckGenerator.__init__(self, num_calls=num_calls)
+        PayCheckGenerator.__init__(self, num_calls=num_calls)
         self.k_inner, self.v_inner = inner
         
-        if not (isinstance(self.k_inner, PyCheckGenerator) and isinstance(self.v_inner, PyCheckGenerator)):
-            raise UnknownTypeException("PyCheck needs a type for dicts, such " +
+        if not (isinstance(self.k_inner, PayCheckGenerator) and
+                isinstance(self.v_inner, PayCheckGenerator)):
+            raise UnknownTypeException("PayCheck needs a type for dicts, such " +
                                        "as (dict, (str, int))")
 
     def next_value(self):

@@ -1,16 +1,16 @@
-h2. Hey!  PyCheck!
+h2. Hey!  PayCheck!
 
-PyCheck is a half-baked implementation of
+PayCheck is a half-baked implementation of
 "ScalaCheck":http://code.google.com/p/scalacheck/, which itself is an
 implementation of "QuickCheck":http://www.cs.chalmers.se/~rjmh/QuickCheck/ for
-Haskell.  PyCheck is useful for defining a specification of what a function
+Haskell.  PayCheck is useful for defining a specification of what a function
 should do, rather than testing its results for a given input.
 
-h3. Installing PyCheck
+h3. Installing PayCheck
 
 <pre>
 <code>
-sudo easy_install pycheck
+sudo easy_install paycheck
 </code>
 </pre>
 
@@ -19,14 +19,14 @@ That's it.  Get going.
 h3. A Quick Example
 
 Let's steal an example right from ScalaCheck.  Here are the string functions
-ported to PyCheck.  See what's going on?  We're defining the types of the
+ported to PayCheck.  See what's going on?  We're defining the types of the
 parameters in with_checker, then values of that type are getting passed to the
 function.
 
 <pre>
 <code>
 import unittest
-from pycheck import with_checker
+from paycheck import with_checker
 
 class TestStrings(unittest.TestCase):
     """
@@ -71,7 +71,7 @@ F....
 FAIL: test_concat (__main__.TestStrings)
 ----------------------------------------------------------------------
 Traceback (most recent call last):
-  File "pycheck/checker.py", line 11, in wrapper
+  File "paycheck/checker.py", line 11, in wrapper
     test_func(self, *v)
   File "test_strings.py", line 20, in test_concat
     self.assertTrue(len(a+b) > len(a))
@@ -89,14 +89,14 @@ your way.
 
 h3. Nested and More Complex Types
 
-At the moment, PyCheck is only going to generate very basic values for you.
+At the moment, PayCheck is only going to generate very basic values for you.
 However, you can nest types like lists and dicts to generate slightly more
 complex values to feed into other objects.  Let's look at an example.
 
 <pre>
 <code>
 import unittest
-from pycheck import with_checker
+from paycheck import with_checker
 
 class TestTypes(unittest.TestCase):
 
@@ -129,7 +129,7 @@ Go at it.
 
 h3. Shortcomings
 
-At the time of writing, I had hacked out PyCheck earlier in the day.  It is
+At the time of writing, I had hacked out PayCheck earlier in the day.  It is
 certainly young software.  That said, tools like QuickCheck have much more
 robust object generation, and ScalaCheck will do a much better job at
 intelligently choosing values to pass your tests to try to break them.  Such

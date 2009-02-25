@@ -1,8 +1,8 @@
-from pycheck.generator import PyCheckGenerator
+from paycheck.generator import PayCheckGenerator
 
 class with_checker(object):
     def __init__(self, *types):
-        self._generators = [PyCheckGenerator.get(t) for t in types]
+        self._generators = [PayCheckGenerator.get(t) for t in types]
     
     def __call__(self, test_func):
         generators = self._generators
