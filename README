@@ -1,15 +1,128 @@
-Sample
-------
+h2. Hey!  PyCheck!
 
+PyCheck is a half-baked implementation of
+"ScalaCheck":http://code.google.com/p/scalacheck/, which itself is an
+implementation of "QuickCheck":http://www.cs.chalmers.se/~rjmh/QuickCheck/ for
+Haskell.  PyCheck is useful for defining a specification of what a function
+should do, rather than testing its results for a given input.
+
+h3. Installing PyCheck
+
+<pre>
+<code>
+sudo easy_install pycheck
+</code>
+</pre>
+
+That's it.  Get going.
+
+h3. A Quick Example
+
+Let's steal an example right from ScalaCheck.  Here are the string functions
+ported to PyCheck.  See what's going on?  We're defining the types of the
+parameters in with_checker, then values of that type are getting passed to the
+function.
+
+<pre>
+<code>
 import unittest
 from pycheck import with_checker
 
-class TestSample(unittest.TestCase):
+class TestStrings(unittest.TestCase):
+    """
+    More-or-less a direct port of the string testing example from the ScalaCheck
+    doc at: http://code.google.com/p/scalacheck/
+    """
+    
+    @with_checker(str, str)
+    def test_starts_with(self, a, b):
+        self.assertTrue((a+b).startswith(a))
 
     @with_checker(str, str)
-    def test_add_strings(self, a, b):
+    def test_ends_with(self, a, b):
         self.assertTrue((a+b).endswith(b))
 
+	# Is this really always true?
+    @with_checker(str, str)
+    def test_concat(self, a, b):
+        self.assertTrue(len(a+b) > len(a))
+        self.assertTrue(len(a+b) > len(b))
+
+    @with_checker(str, str)
+    def test_substring2(self, a, b):
+        self.assertEquals( (a+b)[len(a):], b )
+    
+    @with_checker(str, str, str)
+    def test_substring3(self, a, b, c):
+        self.assertEquals((a+b+c)[len(a):len(a)+len(b)], b)
 
 if __name__ == '__main__':
     unittest.main()
+</code>
+</pre>
+
+Then give the ol' test a run.  You'll likely see a problem:
+
+<pre>
+<code>
+$ python test_strings.py
+F....
+======================================================================
+FAIL: test_concat (__main__.TestStrings)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "pycheck/checker.py", line 11, in wrapper
+    test_func(self, *v)
+  File "test_strings.py", line 20, in test_concat
+    self.assertTrue(len(a+b) > len(a))
+AssertionError
+
+----------------------------------------------------------------------
+Ran 5 tests in 0.051s
+
+FAILED (failures=1)
+</code>
+</pre>
+
+As predicted, test_concat has bombed.  Go change those > to >=, and be about
+your way.
+
+h3. Nested and More Complex Types
+
+At the moment, PyCheck is only going to generate very basic values for you.
+However, you can nest types like lists and dicts to generate slightly more
+complex values to feed into other objects.  Let's look at an example.
+
+<pre>
+<code>
+import unittest
+from pycheck import with_checker
+
+class TestTypes(unittest.TestCase):
+
+    @with_checker(int)
+    def test_int(self, i):
+        self.assertTrue(isinstance(i, int))
+
+    @with_checker((list, int))
+    def test_list_of_ints(self, list_of_ints):
+        for i in list_of_ints:
+            self.assertTrue(isinstance(i, int))
+
+    @with_checker((list, (dict, (str, int))))
+    def test_list_of_dict_of_int_string(self, list_of_dict_of_int_string):
+        self.assertTrue(isinstance(list_of_dict_of_int_string, list))
+        
+        for dict_of_int_string in list_of_dict_of_int_string:
+            self.assertTrue(isinstance(dict_of_int_string, dict))
+
+            for key, value in dict_of_int_string.items():
+                self.assertTrue(isinstance(key, str))
+                self.assertTrue(isinstance(value, int))
+
+if __name__ == '__main__':
+    unittest.main()
+</code>
+</pre>
+
+Go at it.

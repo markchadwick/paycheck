@@ -45,14 +45,12 @@ class TestTypes(unittest.TestCase):
             self.assertTrue(isinstance(value, int))
 
     @with_checker((list, (dict, (str, int))))
-    def test_recursive_dicts_and_lists(self, list_of_dict_of_int_string):
+    def test_list_of_dict_of_int_string(self, list_of_dict_of_int_string):
         self.assertTrue(isinstance(list_of_dict_of_int_string, list))
         
         for dict_of_int_string in list_of_dict_of_int_string:
             self.assertTrue(isinstance(dict_of_int_string, dict))
-            
-            print '- ' * 100
-            print dict_of_int_string
+
             for key, value in dict_of_int_string.items():
                 self.assertTrue(isinstance(key, str))
                 self.assertTrue(isinstance(value, int))
