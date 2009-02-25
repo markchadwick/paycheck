@@ -20,12 +20,22 @@ LIST_LEN = 40
 # Exceptions
 # ------------------------------------------------------------------------------
 
-class UnknownTypeException(Exception):
+class PyCheckException(Exception):
+    pass
+
+class UnknownTypeException(PyCheckException):
     def __init__(self, t_def):
         self.t_def = t_def
     
     def __str__(self):
-        return "PyCheck doesn't know about type: " + str(self.t_def) 
+        return "PyCheck doesn't know about type: " + str(self.t_def)
+
+class UnknownTypeException(PyCheckException):
+    def __init__(self, message):
+        self.message = message
+    
+    def __str__(self):
+        return str(self.message)
 
 # ------------------------------------------------------------------------------
 # Base Generator
@@ -49,7 +59,7 @@ class PyCheckGenerator(object):
     def get(cls, t_def):
         if isinstance(t_def, type):
             return cls._generator_for_type(t_def)()
-        
+            
         elif isinstance(t_def, tuple) and len(t_def) == 2:
             outer, inner = t_def
             return cls._generator_for_type(outer)(cls.get(inner))
@@ -59,6 +69,8 @@ class PyCheckGenerator(object):
         
     @classmethod
     def _generator_for_type(cls, t_def):
+        assert isinstance(t_def, type)
+        
         try:
             return {
                 str:     StringGenerator,
@@ -66,6 +78,7 @@ class PyCheckGenerator(object):
                 unicode: UnicodeGenerator,
                 bool:    BooleanGenerator,
                 list:    ListGenerator,
+                dict:    DictGenerator
             }[t_def]
         except KeyError:
             raise UnknownTypeException(t_def)
@@ -97,10 +110,19 @@ class BooleanGenerator(PyCheckGenerator):
 # ------------------------------------------------------------------------------
 
 class ListGenerator(PyCheckGenerator):
-    def __init__(self, inner, num_calls=NUM_CALLS):
+    def __init__(self, inner=None, num_calls=NUM_CALLS):
         PyCheckGenerator.__init__(self, num_calls=num_calls)
+        if inner is None:
+            raise UnknownTypeException("PyCheck needs a type for lists, such " +
+                                       "as (list, int) or (list, bool)")
         self.inner = inner
     
     def nextValue(self):
         length = random.randint(0, LIST_LEN)
         return [self.inner.nextValue() for x in xrange(length)]
+
+def DictGenerator(PyCheckGenerator):
+    def __init__(self, k_inner, v_inner, num_calls=NUM_CALLS):
+        PyCheckGenerator.__init__(self, num_calls=num_calls)
+        self.k_inner = k_inner
+        self.v_inner = v_inner
