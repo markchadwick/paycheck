@@ -4,5 +4,6 @@ setup(name = 'pycheck',
       description ='A Python QuickCheck implementation',
       author ='Mark Chadwick',
       author_email ='mark.chadwick@gmail.com',
+      url='http://github.com/markchadwick/pycheck/tree/master',
       packages = ['pycheck'])
       
