@@ -59,7 +59,7 @@ class PayCheckGenerator(object):
     def get(cls, t_def):
         if isinstance(t_def, type):
             return cls._generator_for_type(t_def)()
-            
+        
         elif isinstance(t_def, tuple) and len(t_def) == 2:
             outer, inner = t_def
             outer = cls._generator_for_type(outer)
@@ -88,7 +88,10 @@ class PayCheckGenerator(object):
                 set:     SetGenerator,
             }[t_def]
         except KeyError:
-            raise UnknownTypeException(t_def)
+            if issubclass(t_def, PayCheckGenerator):
+                return t_def
+            else:
+                raise UnknownTypeException(t_def)
 
 # ------------------------------------------------------------------------------
 # Basic Type Generators
