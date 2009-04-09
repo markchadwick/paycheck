@@ -42,8 +42,9 @@ class UnknownTypeException(PayCheckException):
 # ------------------------------------------------------------------------------
 
 class PayCheckGenerator(object):
-    def __init__(self, num_calls=NUM_CALLS):
+    def __init__(self, num_calls=NUM_CALLS, can_be_none=False):
         self._calls_remaining = num_calls
+        self._can_be_none = can_be_none
 
     def __iter__(self):
         return self
