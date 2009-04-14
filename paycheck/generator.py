@@ -109,8 +109,18 @@ class UnicodeGenerator(PayCheckGenerator):
         return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PayCheckGenerator):
+    def __init__(self, min=None, max=None):
+        if min is None:
+            min = MIN_INT
+
+        if max is None:
+            max = MAX_INT
+
+        self._min = min
+        self._max = max
+
     def next_value(self):
-        return random.randint(MIN_INT, MAX_INT)
+        return random.randint(self._min, self._max)
 
 class BooleanGenerator(PayCheckGenerator):
     def next_value(self):
