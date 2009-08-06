@@ -78,16 +78,7 @@ class PayCheckGenerator(object):
         assert isinstance(t_def, type)
         
         try:
-            return {
-                str:     StringGenerator,
-                int:     IntGenerator,
-                unicode: UnicodeGenerator,
-                bool:    BooleanGenerator,
-                float:   FloatGenerator,
-                list:    ListGenerator,
-                dict:    DictGenerator,
-                set:     SetGenerator,
-            }[t_def]
+            return generators[t_def]
         except KeyError:
             if issubclass(t_def, PayCheckGenerator):
                 return t_def
@@ -171,3 +162,17 @@ class DictGenerator(CollectionGenerator):
             
         return dct
         
+# ------------------------------------------------------------------------------
+# Dictionary of Generators
+# ------------------------------------------------------------------------------
+
+generators = {
+    str:     StringGenerator,
+    int:     IntGenerator,
+    unicode: UnicodeGenerator,
+    bool:    BooleanGenerator,
+    float:   FloatGenerator,
+    list:    ListGenerator,
+    dict:    DictGenerator,
+    set:     SetGenerator,
+  }
