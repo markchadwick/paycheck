@@ -11,7 +11,7 @@ class test(Command):
 
 from distutils.core import setup
 setup(name = 'paycheck',
-      version ='0.4.2',
+      version ='0.4.3',
       description ='A Python QuickCheck implementation',
       author ='Mark Chadwick',
       author_email ='mark.chadwick@gmail.com',
