@@ -75,7 +75,7 @@ Traceback (most recent call last):
     test_func(self, *v)
   File "test_strings.py", line 20, in test_concat
     self.assertTrue(len(a+b) > len(a))
-AssertionError
+AssertionError: Failed for input ('UGzo2LP<(9Gl_*o*GH$H<+{wPiNk?', '')
 
 ----------------------------------------------------------------------
 Ran 5 tests in 0.051s
@@ -84,8 +84,10 @@ FAILED (failures=1)
 </code>
 </pre>
 
-As predicted, test_concat has bombed.  Go change those > to >=, and be about
-your way.
+As predicted, test_concat has bombed;  note that PayCheck is nice
+enough to tell you which inputs caused the problem.  In this case, we
+see that propety test_concat fails for the empty string, which is caused
+by the fact that we used ">" instead of ">=".
 
 h3. Nested and More Complex Types
 
