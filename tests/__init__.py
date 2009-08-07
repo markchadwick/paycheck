@@ -1,11 +1,12 @@
 import unittest
 
-from tests import test_generator, test_sample, test_strings, test_types
+from tests import test_generator, test_sample, test_strings, test_types, test_values
 modules = [
     test_generator,
     test_sample,
     test_strings,
-    test_types
+    test_types,
+    test_values
     ]
 
 def run_tests():

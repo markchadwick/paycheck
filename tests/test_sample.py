@@ -8,11 +8,6 @@ class TestSample(unittest.TestCase):
     def test_string_concatination(self, a, b):
         self.assertTrue((a+b).endswith(b))
 
-    @with_checker(irange(0,10))
-    def test_irange_range(self,i):
-        self.assertTrue(i >= 0)
-        self.assertTrue(i <= 10)
-
 tests = [TestSample]
 
 if __name__ == '__main__':

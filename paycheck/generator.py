@@ -88,7 +88,20 @@ class BooleanGenerator(PayCheckGenerator):
 class FloatGenerator(PayCheckGenerator):
     def next(self):
         return (random.random() - 0.5) * 9999999.0
-    
+
+class NonNegativeFloatGenerator(PayCheckGenerator):
+    def next(self):
+        return random.random() * 9999999.0
+non_negative_float = NonNegativeFloatGenerator()
+
+class PositiveFloatGenerator(NonNegativeFloatGenerator):
+    def next(self):
+        value = 0
+        while value <= 0:
+            value = random.random() * 9999999.0
+        return value
+positive_float = PositiveFloatGenerator()
+
 # ------------------------------------------------------------------------------
 # Collection Generators
 # ------------------------------------------------------------------------------
