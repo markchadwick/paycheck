@@ -89,9 +89,20 @@ your way.
 
 h3. Nested and More Complex Types
 
-At the moment, PayCheck is only going to generate very basic values for you.
-However, you can nest types like lists and dicts to generate slightly more
-complex values to feed into other objects.  Let's look at an example.
+Container and nested types are specified to PayCheck "by analogy".
+That is, unlike scalar types, which are specified by giving the type
+that you want, container types are specified by creating a non-empty
+container of the type you want which contains a specification of the
+type that you want generated containers to contain; note that the
+contained element is itself allowed to be a container, allowing for
+arbitrarily nested types.  PayCheck will infer from your containers
+the type of container and contained elements that you want to
+generate.  This includes dictionaries: it will look at the first
+key/value mapping that it sees and infer from it both the key type and
+the value type.  Containers will be generated with between 0 and
+paycheck.generator.LIST_LEN elements.
+
+The following examples illustrate how this works:
 
 <pre>
 <code>
@@ -104,12 +115,13 @@ class TestTypes(unittest.TestCase):
     def test_int(self, i):
         self.assertTrue(isinstance(i, int))
 
-    @with_checker((list, int))
-    def test_list_of_ints(self, list_of_ints):
+    @with_checker([int])
+    def test_get_list(self, list_of_ints):
+        self.assertTrue(isinstance(list_of_ints, list))
         for i in list_of_ints:
             self.assertTrue(isinstance(i, int))
 
-    @with_checker((list, (dict, (str, int))))
+    @with_checker([{str: int}])
     def test_list_of_dict_of_int_string(self, list_of_dict_of_int_string):
         self.assertTrue(isinstance(list_of_dict_of_int_string, list))
         
