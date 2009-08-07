@@ -137,13 +137,3 @@ if __name__ == '__main__':
 </code>
 </pre>
 
-Go at it.
-
-h3. Shortcomings
-
-At the time of writing, I had hacked out PayCheck earlier in the day.  It is
-certainly young software.  That said, tools like QuickCheck have much more
-robust object generation, and ScalaCheck will do a much better job at
-intelligently choosing values to pass your tests to try to break them.  Such
-features may make it into a 1.0.  Frankly, what it does at the moment is enough
-for me, so I wouldn't hold your breath for that one.
