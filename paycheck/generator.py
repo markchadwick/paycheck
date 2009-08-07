@@ -10,7 +10,6 @@ from itertools import izip, islice
 MIN_INT = -sys.maxint - 1
 MAX_INT = sys.maxint
 
-MAX_STR = 255
 MAX_UNI = sys.maxunicode
 
 LIST_LEN = 30
@@ -63,7 +62,7 @@ class PayCheckGenerator(object):
 class StringGenerator(PayCheckGenerator):
     def next(self):
         length = random.randint(0, LIST_LEN)
-        return ''.join([chr(random.randint(0, MAX_STR)) for x in xrange(length)])
+        return ''.join([chr(random.randint(ord('!'), ord('~'))) for x in xrange(length)])
 
 class UnicodeGenerator(PayCheckGenerator):
     def next(self):
