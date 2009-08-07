@@ -28,5 +28,7 @@ class TestStrings(unittest.TestCase):
     def test_substring3(self, a, b, c):
         self.assertEquals((a+b+c)[len(a):len(a)+len(b)], b)
 
+tests = [TestStrings]
+
 if __name__ == '__main__':
     unittest.main()
