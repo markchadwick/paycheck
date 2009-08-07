@@ -6,6 +6,8 @@ implementation of "QuickCheck":http://www.cs.chalmers.se/~rjmh/QuickCheck/ for
 Haskell.  PayCheck is useful for defining a specification of what a function
 should do, rather than testing its results for a given input.
 
+Thanks to gcross for some of the "more recent changes":http://github.com/gcross/paycheck/tree/master
+
 h3. Installing PayCheck
 
 <pre>
