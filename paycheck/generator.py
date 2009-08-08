@@ -102,6 +102,10 @@ class PositiveFloatGenerator(NonNegativeFloatGenerator):
         return value
 positive_float = PositiveFloatGenerator()
 
+class ComplexGenerator(PayCheckGenerator):
+    def next(self):
+        return ((random.random() - 0.5) * 9999999.0) + ((random.random() - 0.5) * 9999999.0)*1j
+
 # ------------------------------------------------------------------------------
 # Collection Generators
 # ------------------------------------------------------------------------------
@@ -156,6 +160,7 @@ scalar_generators = {
     unicode: UnicodeGenerator,
     bool:    BooleanGenerator,
     float:   FloatGenerator,
+    complex: ComplexGenerator,
   }
 
 container_generators = {

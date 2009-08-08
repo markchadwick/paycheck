@@ -11,6 +11,14 @@ class TestTypes(unittest.TestCase):
     def test_int(self, i):
         self.assertTrue(isinstance(i, int))
 
+    @with_checker(float)
+    def test_float(self, f):
+        self.assertTrue(isinstance(f, float))
+
+    @with_checker(complex)
+    def test_complex(self, c):
+        self.assertTrue(isinstance(c, complex))
+
     @with_checker(unicode)
     def test_unicode(self, u):
         self.assertTrue(isinstance(u, unicode) or
