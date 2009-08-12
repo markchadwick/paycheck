@@ -1,5 +1,5 @@
 import unittest
-from paycheck import with_checker
+from paycheck import with_checker, irange, frange
 
 class TestTypes(unittest.TestCase):
 
@@ -11,8 +11,16 @@ class TestTypes(unittest.TestCase):
     def test_int(self, i):
         self.assertTrue(isinstance(i, int))
 
+    @with_checker(irange(1,10))
+    def test_irange(self, i):
+        self.assertTrue(isinstance(i, int))
+
     @with_checker(float)
     def test_float(self, f):
+        self.assertTrue(isinstance(f, float))
+
+    @with_checker(frange(1,10))
+    def test_frange(self, f):
         self.assertTrue(isinstance(f, float))
 
     @with_checker(complex)

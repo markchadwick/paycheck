@@ -87,8 +87,15 @@ class BooleanGenerator(PayCheckGenerator):
         return random.randint(0, 1) == 1
 
 class FloatGenerator(PayCheckGenerator):
+    def __init__(self,min=-1e7,max=1e7):
+        self._min = min
+        self._length = max-min
+        
     def next(self):
-        return (random.random() - 0.5) * 9999999.0
+        return random.random()*self._length+self._min
+
+def frange(min,max):
+    return FloatGenerator(min,max)
 
 class NonNegativeFloatGenerator(PayCheckGenerator):
     def next(self):
