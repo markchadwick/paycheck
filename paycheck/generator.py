@@ -70,16 +70,17 @@ class UnicodeGenerator(PayCheckGenerator):
         return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PayCheckGenerator):
-    def __init__(self, min=MIN_INT, max=MAX_INT):
+    def __init__(self, min=MIN_INT, max=MAX_INT, step=1):
         PayCheckGenerator.__init__(self)
         self._min = min
-        self._max = max
+        self._boundary = (max-min)//step
+        self._step = step
 
     def next(self):
-        return random.randint(self._min, self._max)
+        return int(random.randint(0,self._boundary)*self._step+self._min)
 
-def irange(min,max):
-    return IntGenerator(min,max)
+def irange(min,max,step=1):
+    return IntGenerator(min,max,step)
 
 class BooleanGenerator(PayCheckGenerator):
     def next(self):
