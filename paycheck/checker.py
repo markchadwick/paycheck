@@ -1,6 +1,7 @@
 import paycheck
 from paycheck.generator import PayCheckGenerator
 from itertools import izip, islice
+import sys
 
 class with_checker(object):
     def __init__(self, *types, **settings):
@@ -15,7 +16,7 @@ class with_checker(object):
                 try:
                     test_func(self, *v)
                 except self.failureException:
-                    raise self.failureException("Failed for input " + str(v))
+                    raise self.failureException("Failed for input " + str(v)), None, sys.exc_traceback
         
         wrapper.__doc__ = test_func.__doc__
         wrapper.__name__ = test_func.__name__
