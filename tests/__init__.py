@@ -1,7 +1,8 @@
 import unittest
 
-from tests import test_generator, test_sample, test_strings, test_types, test_usage, test_values
+from tests import test_basics, test_generator, test_sample, test_strings, test_types, test_usage, test_values
 modules = [
+    test_basics,
     test_generator,
     test_sample,
     test_strings,
