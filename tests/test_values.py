@@ -28,11 +28,6 @@ class TestValues(unittest.TestCase):
         self.assertTrue(f >=  0)
         self.assertTrue(f <  10)
 
-    @with_checker(generator.NonNegativeFloatGenerator(1e3,1e5))
-    def test_frange(self,f):
-        self.assertTrue(f >=  1e3)
-        self.assertTrue(f <   1e5)
-
     @with_checker(unit_interval_float)
     def test_unit_interval_float(self,f):
         self.assertTrue(f >=  0)
@@ -41,6 +36,11 @@ class TestValues(unittest.TestCase):
     @with_checker(non_negative_float)
     def test_non_negative_floats(self,f):
         self.assertTrue(f >= 0)
+
+    @with_checker(non_negative_float(1e3,1e5))
+    def test_frange(self,f):
+        self.assertTrue(f >=  1e3)
+        self.assertTrue(f <   1e5)
 
     @with_checker(positive_float)
     def test_positive_floats(self,f):

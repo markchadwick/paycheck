@@ -51,7 +51,10 @@ class PayCheckGenerator(object):
             if isinstance(t_def, PayCheckGenerator):
                 return t_def
             elif isinstance(t_def, type):
-                return scalar_generators[t_def]()
+                if issubclass(t_def, PayCheckGenerator):
+                    return t_def()
+                else:
+                    return scalar_generators[t_def]()
             else:
                 return container_generators[type(t_def)](t_def)
         except KeyError:
@@ -108,7 +111,7 @@ class NonNegativeFloatGenerator(PayCheckGenerator):
         self._minimum_magnitude = minimum_magnitude
     def next(self):
         return exp(random.random() * self._scale_range + self._minimum_magnitude)
-non_negative_float = NonNegativeFloatGenerator()
+non_negative_float = NonNegativeFloatGenerator
 
 class PositiveFloatGenerator(NonNegativeFloatGenerator):
     def next(self):
@@ -116,7 +119,7 @@ class PositiveFloatGenerator(NonNegativeFloatGenerator):
         while value == 0:
             value = super(PositiveFloatGenerator,self).next()
         return value
-positive_float = PositiveFloatGenerator()
+positive_float = PositiveFloatGenerator
 
 class FloatGenerator(NonNegativeFloatGenerator):
     def next(self):
