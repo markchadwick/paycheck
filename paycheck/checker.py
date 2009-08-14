@@ -26,11 +26,14 @@ class Checker(object):
     def __call__(self, test_func):
         if test_func.func_defaults:
             self._argument_generators += [PayCheckGenerator.get(t) for t in test_func.func_defaults]
-        argument_generators = izip(*self._argument_generators)
-        keyword_generators = izip(*self._keyword_generators)
-        number_of_calls = self._number_of_calls
+        if len(self._argument_generators) + len(self._keyword_generators) > 0:
+            argument_generators = izip(*self._argument_generators)
+            keyword_generators = izip(*self._keyword_generators)
+            generator = islice(izip_longest(argument_generators,keyword_generators,fillvalue=()),self._number_of_calls)
+        else:
+            generator = repeat(((),()),self._number_of_calls)
         def wrapper(*pre_args):
-            for (args,keywords) in islice(izip_longest(argument_generators,keyword_generators,fillvalue=()),number_of_calls):
+            for (args,keywords) in generator:
                 try:
                     test_func(*(pre_args+args), **dict(keywords))
                 except Exception, e:
