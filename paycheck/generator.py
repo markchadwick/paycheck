@@ -97,6 +97,8 @@ class FloatGenerator(PayCheckGenerator):
 def frange(min,max):
     return FloatGenerator(min,max)
 
+unit_interval_float = frange(0,1)
+
 class NonNegativeFloatGenerator(PayCheckGenerator):
     def next(self):
         return random.random() * 9999999.0
