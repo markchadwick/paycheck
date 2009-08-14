@@ -2,6 +2,8 @@ import sys
 import string
 import random
 from itertools import izip, islice
+from math import log, exp, pi
+import cmath
 
 # ------------------------------------------------------------------------------
 # Constants
@@ -86,7 +88,7 @@ class BooleanGenerator(PayCheckGenerator):
     def next(self):
         return random.randint(0, 1) == 1
 
-class FloatGenerator(PayCheckGenerator):
+class UniformFloatGenerator(PayCheckGenerator):
     def __init__(self,min=-1e7,max=1e7):
         self._min = min
         self._length = max-min
@@ -94,27 +96,35 @@ class FloatGenerator(PayCheckGenerator):
     def next(self):
         return random.random()*self._length+self._min
 
-def frange(min,max):
-    return FloatGenerator(min,max)
+frange = UniformFloatGenerator
 
 unit_interval_float = frange(0,1)
 
 class NonNegativeFloatGenerator(PayCheckGenerator):
+    def __init__(self,minimum_magnitude=1e-7,maximum_magnitude=1e+7):
+        minimum_magnitude = log(minimum_magnitude)
+        maximum_magnitude = log(maximum_magnitude)
+        self._scale_range = maximum_magnitude-minimum_magnitude
+        self._minimum_magnitude = minimum_magnitude
     def next(self):
-        return random.random() * 9999999.0
+        return exp(random.random() * self._scale_range + self._minimum_magnitude)
 non_negative_float = NonNegativeFloatGenerator()
 
 class PositiveFloatGenerator(NonNegativeFloatGenerator):
     def next(self):
         value = 0
-        while value <= 0:
-            value = random.random() * 9999999.0
+        while value == 0:
+            value = super(PositiveFloatGenerator,self).next()
         return value
 positive_float = PositiveFloatGenerator()
 
-class ComplexGenerator(PayCheckGenerator):
+class FloatGenerator(NonNegativeFloatGenerator):
     def next(self):
-        return ((random.random() - 0.5) * 9999999.0) + ((random.random() - 0.5) * 9999999.0)*1j
+        return super(FloatGenerator,self).next()*random.choice([+1,-1])
+
+class ComplexGenerator(NonNegativeFloatGenerator):
+    def next(self):
+        return super(ComplexGenerator,self).next() * cmath.exp(random.random()*2*pi*1j)
 
 # ------------------------------------------------------------------------------
 # Collection Generators

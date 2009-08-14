@@ -1,5 +1,6 @@
 import unittest
 from paycheck import *
+from paycheck import generator
 
 class TestValues(unittest.TestCase):
 
@@ -26,6 +27,11 @@ class TestValues(unittest.TestCase):
     def test_frange(self,f):
         self.assertTrue(f >=  0)
         self.assertTrue(f <  10)
+
+    @with_checker(generator.NonNegativeFloatGenerator(1e3,1e5))
+    def test_frange(self,f):
+        self.assertTrue(f >=  1e3)
+        self.assertTrue(f <   1e5)
 
     @with_checker(unit_interval_float)
     def test_unit_interval_float(self,f):
