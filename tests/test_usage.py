@@ -13,6 +13,11 @@ class TestUsage(unittest.TestCase):
         self.assertTrue(isinstance(i, int))
         self.assertTrue(isinstance(i, float))
 
+    @with_checker
+    def test_without_parentheses(self, i=int, f=float):
+        self.assertTrue(isinstance(i, int))
+        self.assertTrue(isinstance(i, float))
+
 tests = [TestUsage]
 
 if __name__ == '__main__':

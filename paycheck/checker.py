@@ -6,7 +6,13 @@ from itertools import izip, islice, repeat
 import sys
 from types import FunctionType
 
-class with_checker(object):
+def with_checker(*args, **keywords):
+    if len(args) == 1 and isinstance(args[0],FunctionType):
+        return Checker()(args[0])
+    else:
+        return Checker(*args, **keywords)
+
+class Checker(object):
     _argument_generators = []
     _keyword_generators = []
     _number_of_calls = 100
