@@ -37,7 +37,7 @@ class Checker(object):
                 try:
                     test_func(*(pre_args+args), **dict(keywords))
                 except Exception, e:
-                    raise e.__class__("Failed for input " + str(args+keywords)), None, sys.exc_traceback
+                    raise e.__class__("Failed for input %s with message '%s'" % (args+keywords,e)), None, sys.exc_traceback
         
         wrapper.__doc__ = test_func.__doc__
         wrapper.__name__ = test_func.__name__
