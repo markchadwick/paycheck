@@ -13,13 +13,10 @@ def with_checker(*args, **keywords):
         return Checker(*args, **keywords)
 
 class Checker(object):
-    _argument_generators = []
-    _keyword_generators = []
-    _number_of_calls = 100
+    
     def __init__(self, *args, **keywords):
-        if "number_of_calls" in keywords:
-            self._number_of_calls = keywords["number_of_calls"]
-            del keywords["number_of_calls"]
+        self._number_of_calls = keywords.pop('number_of_calls', 100)
+        self._verbose = keywords.pop('verbose', False) 
         self._argument_generators = [PayCheckGenerator.get(t) for t in args]
         self._keyword_generators = [izip(repeat(name),PayCheckGenerator.get(t)) for (name,t) in keywords.iteritems()]
     
@@ -33,11 +30,15 @@ class Checker(object):
         else:
             generator = repeat(((),()),self._number_of_calls)
         def wrapper(*pre_args):
+            i = 0
             for (args,keywords) in generator:
                 try:
+                    if self._verbose:
+                        sys.stderr.write("%d: %r\n" % (i, args))
                     test_func(*(pre_args+args), **dict(keywords))
                 except Exception, e:
                     raise e.__class__("Failed for input %s with message '%s'" % (args+keywords,e)), None, sys.exc_traceback
+                i += 1
         
         wrapper.__doc__ = test_func.__doc__
         wrapper.__name__ = test_func.__name__
