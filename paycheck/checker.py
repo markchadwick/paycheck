@@ -44,3 +44,8 @@ class Checker(object):
         wrapper.__name__ = test_func.__name__
 
         return wrapper
+
+__all__ = [
+    'with_checker',
+    'Checker',
+]
