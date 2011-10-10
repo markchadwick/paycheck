@@ -1,5 +1,6 @@
 import unittest
 from paycheck import with_checker
+import sys
 
 class Dummy:
     pass
@@ -22,6 +23,19 @@ class TestBasics(unittest.TestCase):
         o.times_called = 0
         call_me()
         self.assert_(o.times_called > 0)
+
+    def test_throws_correct_exception_upon_failure(self):
+        class MyException(Exception):
+            pass
+        e = MyException("FAIL")
+        @with_checker(number_of_calls=1)
+        def call_me():
+            raise e
+        try:
+            call_me()
+            self.fail("Exception was not thrown!")
+        except MyException:
+            pass
 
 tests = [TestBasics]
 
