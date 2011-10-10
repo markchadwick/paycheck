@@ -44,6 +44,9 @@ class IncompleteTypeException(PayCheckException):
 class PayCheckGenerator(object):
     def __iter__(self):
         return self
+
+    def next(self):
+        return self.__next__()
     
     @classmethod
     def get(cls, t_def):
@@ -65,14 +68,15 @@ class PayCheckGenerator(object):
 # ------------------------------------------------------------------------------
 
 class StringGenerator(PayCheckGenerator):
-    def next(self):
+    def __next__(self):
         length = random.randint(0, LIST_LEN)
         return ''.join([chr(random.randint(ord('!'), ord('~'))) for x in xrange(length)])
 
-class UnicodeGenerator(PayCheckGenerator):
-    def next(self):
-        length = random.randint(0, LIST_LEN)
-        return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
+if sys.version_info[0] < 3:
+    class UnicodeGenerator(PayCheckGenerator):
+        def __next__(self):
+            length = random.randint(0, LIST_LEN)
+            return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PayCheckGenerator):
     def __init__(self, min=MIN_INT, max=MAX_INT, step=1):
@@ -81,14 +85,14 @@ class IntGenerator(PayCheckGenerator):
         self._boundary = (max-min)//step
         self._step = step
 
-    def next(self):
+    def __next__(self):
         return int(random.randint(0,self._boundary)*self._step+self._min)
 
 def irange(min,max,step=1):
     return IntGenerator(min,max,step)
 
 class BooleanGenerator(PayCheckGenerator):
-    def next(self):
+    def __next__(self):
         return random.randint(0, 1) == 1
 
 class UniformFloatGenerator(PayCheckGenerator):
@@ -96,7 +100,7 @@ class UniformFloatGenerator(PayCheckGenerator):
         self._min = min
         self._length = max-min
         
-    def next(self):
+    def __next__(self):
         return random.random()*self._length+self._min
 
 frange = UniformFloatGenerator
@@ -109,25 +113,25 @@ class NonNegativeFloatGenerator(PayCheckGenerator):
         maximum_magnitude = log(maximum_magnitude)
         self._scale_range = maximum_magnitude-minimum_magnitude
         self._minimum_magnitude = minimum_magnitude
-    def next(self):
+    def __next__(self):
         return exp(random.random() * self._scale_range + self._minimum_magnitude)
 non_negative_float = NonNegativeFloatGenerator
 
 class PositiveFloatGenerator(NonNegativeFloatGenerator):
-    def next(self):
+    def __next__(self):
         value = 0
         while value == 0:
-            value = super(PositiveFloatGenerator,self).next()
+            value = NonNegativeFloatGenerator.__next__(self)
         return value
 positive_float = PositiveFloatGenerator
 
 class FloatGenerator(NonNegativeFloatGenerator):
-    def next(self):
-        return super(FloatGenerator,self).next()*random.choice([+1,-1])
+    def __next__(self):
+        return NonNegativeFloatGenerator.__next__(self)*random.choice([+1,-1])
 
 class ComplexGenerator(NonNegativeFloatGenerator):
-    def next(self):
-        return super(ComplexGenerator,self).next() * cmath.exp(random.random()*2*pi*1j)
+    def __next__(self):
+        return NonNegativeFloatGenerator.__next__(self) * cmath.exp(random.random()*2*pi*1j)
 
 # ------------------------------------------------------------------------------
 # Collection Generators
@@ -138,7 +142,7 @@ class CollectionGenerator(PayCheckGenerator):
         PayCheckGenerator.__init__(self)
         self.inner = PayCheckGenerator.get(t_def)
     
-    def next(self):
+    def __next__(self):
         return self.to_container(islice(self.inner,random.randint(0,LIST_LEN)))
 
 class ListGenerator(CollectionGenerator):
@@ -180,11 +184,13 @@ class TupleGenerator(PayCheckGenerator):
 scalar_generators = {
     str:     StringGenerator,
     int:     IntGenerator,
-    unicode: UnicodeGenerator,
     bool:    BooleanGenerator,
     float:   FloatGenerator,
     complex: ComplexGenerator,
   }
+
+if sys.version_info[0] < 3:
+    scalar_generators[unicode] = UnicodeGenerator
 
 container_generators = {
     list:    ListGenerator,
@@ -206,7 +212,6 @@ __all__ = [
     'IncompleteTypeException',
     'PayCheckGenerator',
     'StringGenerator',
-    'UnicodeGenerator',
     'IntGenerator',
     'irange',
     'BooleanGenerator',
@@ -227,3 +232,6 @@ __all__ = [
     'scalar_generators',
     'container_generators',
 ]
+
+if sys.version_info[0] < 3:
+    __all__.append('UnicodeGenerator')

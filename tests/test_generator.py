@@ -1,5 +1,6 @@
 import unittest
 from paycheck.generator import *
+import sys
 
 class TestGenerator(unittest.TestCase):
     def test_get_int(self):
@@ -13,12 +14,13 @@ class TestGenerator(unittest.TestCase):
                     PayCheckGenerator.get(str),
                     StringGenerator
                     ))
-    
-    def test_get_unicode(self):
-        self.assert_(isinstance(
-                    PayCheckGenerator.get(unicode),
-                    UnicodeGenerator
-                    ))
+
+    if sys.version_info[0] < 3:
+        def test_get_unicode(self):
+            self.assert_(isinstance(
+                        PayCheckGenerator.get(unicode),
+                        UnicodeGenerator
+                        ))
     
     def test_get_boolean(self):
         self.assert_(isinstance(
@@ -63,6 +65,7 @@ class TestGenerator(unittest.TestCase):
         generator = PayCheckGenerator.get({str:int})
         self.assertTrue(isinstance(generator, DictGenerator))
         self.assertTrue(isinstance(generator.inner, TupleGenerator))
+        print(generator.inner.generators[0].__class__)
         self.assertTrue(isinstance(generator.inner.generators[0], StringGenerator))
         self.assertTrue(isinstance(generator.inner.generators[1], IntGenerator))
 

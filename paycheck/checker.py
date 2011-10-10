@@ -37,7 +37,10 @@ class Checker(object):
                         sys.stderr.write("%d: %r\n" % (i, args))
                     test_func(*(pre_args+args), **dict(keywords))
                 except Exception, e:
-                    raise e.__class__("Failed for input %s with message '%s'" % (args+keywords,e)), None, sys.exc_traceback
+                    if sys.version_info[0] < 3:
+                        raise e.__class__("Failed for input %s with message '%s'" % (args+keywords,e)), None, sys.exc_traceback
+                    else:
+                        raise e.__class__("Failed for input {}".format(args)).with_traceback(e.__traceback__)
                 i += 1
         
         wrapper.__doc__ = test_func.__doc__

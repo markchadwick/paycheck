@@ -1,5 +1,6 @@
 import unittest
 from paycheck import with_checker, irange, frange
+import sys
 
 class TestTypes(unittest.TestCase):
 
@@ -27,9 +28,10 @@ class TestTypes(unittest.TestCase):
     def test_complex(self, c):
         self.assertTrue(isinstance(c, complex))
 
-    @with_checker(unicode)
-    def test_unicode(self, u):
-        self.assertTrue(isinstance(u, unicode) or
+    if sys.version_info[0] < 3:
+        @with_checker(unicode)
+        def test_unicode(self, u):
+            self.assertTrue(isinstance(u, unicode) or
                         isinstance(u, str))
 
     @with_checker(bool)
