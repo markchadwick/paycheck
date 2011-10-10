@@ -1,25 +1,16 @@
 import sys
 import string
 import random
-import itertools
-from itertools import islice
+from itertools import izip, islice
 from math import log, exp, pi
 import cmath
-
-if sys.version_info[0] < 3:
-    zip = itertools.izip
-    range = xrange
 
 # ------------------------------------------------------------------------------
 # Constants
 # ------------------------------------------------------------------------------
 
-if sys.version_info[0] < 3:
-    MIN_INT = -sys.maxint - 1
-    MAX_INT = sys.maxint
-else:
-    MIN_INT = -sys.maxsize - 1
-    MAX_INT = sys.maxsize
+MIN_INT = -sys.maxint - 1
+MAX_INT = sys.maxint
 
 MAX_UNI = sys.maxunicode
 
@@ -53,9 +44,6 @@ class IncompleteTypeException(PayCheckException):
 class PayCheckGenerator(object):
     def __iter__(self):
         return self
-
-    def __next__(self):
-        return self.next()
     
     @classmethod
     def get(cls, t_def):
@@ -79,12 +67,12 @@ class PayCheckGenerator(object):
 class StringGenerator(PayCheckGenerator):
     def next(self):
         length = random.randint(0, LIST_LEN)
-        return ''.join([chr(random.randint(ord('!'), ord('~'))) for x in range(length)])
+        return ''.join([chr(random.randint(ord('!'), ord('~'))) for x in xrange(length)])
 
 class UnicodeGenerator(PayCheckGenerator):
     def next(self):
         length = random.randint(0, LIST_LEN)
-        return ''.join([unicode(random.randint(0, MAX_UNI)) for x in range(length)])
+        return ''.join([unicode(random.randint(0, MAX_UNI)) for x in xrange(length)])
 
 class IntGenerator(PayCheckGenerator):
     def __init__(self, min=MIN_INT, max=MAX_INT, step=1):
@@ -156,7 +144,7 @@ class CollectionGenerator(PayCheckGenerator):
 class ListGenerator(CollectionGenerator):
     def __init__(self, example):
         try:
-            CollectionGenerator.__init__(self,next(iter(example)))
+            CollectionGenerator.__init__(self,iter(example).next())
         except StopIteration:
             raise IncompleteTypeException(example)
 
@@ -170,7 +158,7 @@ class SetGenerator(ListGenerator):
 class DictGenerator(CollectionGenerator):
     def __init__(self, example):
         try:
-            CollectionGenerator.__init__(self,next(iter(example.items())))
+            CollectionGenerator.__init__(self,example.iteritems().next())
         except StopIteration:
             raise IncompleteTypeException(example)
 
@@ -180,10 +168,10 @@ class DictGenerator(CollectionGenerator):
 class TupleGenerator(PayCheckGenerator):
     def __init__(self, example):
         PayCheckGenerator.__init__(self)
-        self.generators = [PayCheckGenerator.get(x) for x in example]
+        self.generators = map(PayCheckGenerator.get,example)
 
     def __iter__(self):
-        return zip(*self.generators)
+        return izip(*self.generators)        
         
 # ------------------------------------------------------------------------------
 # Dictionary of Generators
@@ -192,12 +180,11 @@ class TupleGenerator(PayCheckGenerator):
 scalar_generators = {
     str:     StringGenerator,
     int:     IntGenerator,
+    unicode: UnicodeGenerator,
     bool:    BooleanGenerator,
     float:   FloatGenerator,
     complex: ComplexGenerator,
   }
-if sys.version_info[0] < 3:
-    scalar_generators[unicode] = UnicodeGenerator
 
 container_generators = {
     list:    ListGenerator,
