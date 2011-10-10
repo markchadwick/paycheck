@@ -14,7 +14,7 @@ class test(Command):
 
 setup(
     name = 'paycheck',
-    version ='0.4.4',
+    version ='0.4.5',
     description ='A Python QuickCheck implementation',
     author ='Mark Chadwick',
     author_email ='mark.chadwick@gmail.com',
